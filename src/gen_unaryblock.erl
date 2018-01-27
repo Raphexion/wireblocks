@@ -1,3 +1,8 @@
+%%%
+%% @author Niklas Johansson <raphexion@gmail.com>
+%% @doc Behaviour to reduce boilerplate code of functin blocks
+%%%
+
 -module(gen_unaryblock).
 
 -behaviour(gen_server).
@@ -18,6 +23,7 @@
 
 behaviour_info(callbacks) ->
     [{start, 4}, {f, 2}];
+
 behaviour_info(_) ->
     undefined.
 
@@ -32,6 +38,7 @@ start_link(Mod, Name, X, Z, FState) ->
 %% gen_server Behaviour
 %%%
 
+%% @hidden
 init({Mod, Name, X, Z, FState0}) ->
     {ok, ValX} = wire:probe(X),
 
@@ -40,19 +47,24 @@ init({Mod, Name, X, Z, FState0}) ->
 
     {ok, {Mod, Name, Z, ValX, FState}}.
 
+%% @hidden
 handle_call(_What, _From, State) ->
     {reply, ok, State}.
 
+%% @hidden
 handle_cast(_What, State) ->
     {noreply, State}.
 
+%% @hidden
 handle_info({x, X}, {Mod, Name, Z, _, FState0}) ->
     FState = update(Mod, Z, X, FState0),
     {noreply, {Mod, Name, Z, X, FState}}.
 
+%% @hidden
 terminate(_Reason, _State) ->
     ok.
 
+%% @hidden
 code_change(_OldVsn, State, _Extra) ->
     {ok, State}.
 
@@ -60,6 +72,7 @@ code_change(_OldVsn, State, _Extra) ->
 %% Private
 %%%
 
+%% @hidden
 update(Mod, Z, X, FState0) ->
     {ok, Val, FState} = Mod:f(X, FState0),
     wire:set(Z, Val),
