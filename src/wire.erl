@@ -64,7 +64,6 @@ start_link(Opts) ->
 
 %% @hidden
 init([Name, Value]) ->
-    io:fwrite("New Wire ~p with value ~p~n", [Name, Value]),
     register(Name, self()),
     {ok, {Value, []}}.
 
@@ -78,7 +77,6 @@ handle_call(What, _From, State) ->
 
 %% @hidden
 handle_cast({add_observer, Observer, Tag}, {Value, Observers}) ->
-    Observer ! {Tag, Value},
     {noreply, {Value, [{Tag, Observer}] ++ Observers}};
 
 %% @hidden
