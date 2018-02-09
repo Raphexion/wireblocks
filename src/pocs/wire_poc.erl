@@ -1,4 +1,4 @@
--module(poc).
+-module(wire_poc).
 
 -export([start/0]).
 
