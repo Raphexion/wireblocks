@@ -1,0 +1,4 @@
+%% encoding: UTF-8
+{application,wireblocks}.
+{modules,[adder,alias,chain,delay,gen_binaryblock,gen_unaryblock,inc,mul,poc,
+          wire,wireblocks_app,wireblocks_sup]}.
