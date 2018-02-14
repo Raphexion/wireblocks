@@ -1,7 +1,7 @@
 wireblocks
 =====
 
-An OTP application
+Discrete Event Simulator Framework.
 
 Build
 -----
