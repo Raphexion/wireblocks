@@ -1,5 +1,7 @@
 wireblocks
-=====
+==========
+
+[![Build Status](https://travis-ci.org/Raphexion/wireblocks.svg?branch=master)](https://travis-ci.org/Raphexion/wireblocks)
 
 Discrete Event Simulator Framework.
 
