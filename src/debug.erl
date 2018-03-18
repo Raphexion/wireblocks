@@ -2,13 +2,13 @@
 
 -behaviour(gen_sinkblock).
 
--export([start/3]).
+-export([start/2]).
 
 -export([f/2]).
 
-start(Name, Wire, Local) ->
-    gen_sinkblock:start_link(?MODULE, Name, Wire, Local).
+start(Wire, Local) ->
+    gen_sinkblock:start_link(?MODULE, Wire, Local).
 
 f(X, Local) ->
-    io:fwrite("~p~n", [X]),
+    io:fwrite("~p~p~n", [Local, X]),
     {ok, Local}.

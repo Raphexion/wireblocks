@@ -11,7 +11,7 @@
 
 -export([behaviour_info/1]).
 
--export([start_link/4,
+-export([start_link/3,
 	 init/1,
 	 handle_call/3,
 	 handle_cast/2,
@@ -22,7 +22,7 @@
 %%
 
 behaviour_info(callbacks) ->
-    [{start, 3}, {f, 2}];
+    [{start, 2}, {f, 2}];
 
 behaviour_info(_) ->
     undefined.
@@ -31,17 +31,17 @@ behaviour_info(_) ->
 %% gen_binaryblock API
 %%%
 
-start_link(Mod, Name, Wire, FState) ->
-    gen_server:start_link(?MODULE, {Mod, Name, Wire, FState}, []).
+start_link(Mod, Wire, FState) ->
+    gen_server:start_link(?MODULE, {Mod, Wire, FState}, []).
 
 %%%
 %% gen_server Behaviour
 %%%
 
 %% @hidden
-init({Mod, Name, Wire, FState0}) ->
+init({Mod, Wire, FState0}) ->
     wire:add_observer(Wire, self(), x),
-    {ok, {Mod, Name, FState0}}.
+    {ok, {Mod, FState0}}.
 
 %% @hidden
 handle_call(_What, _From, State) ->
@@ -52,9 +52,9 @@ handle_cast(_What, State) ->
     {noreply, State}.
 
 %% @hidden
-handle_info({x, X}, {Mod, Name, FState0}) ->
+handle_info({x, X}, {Mod, FState0}) ->
     FState = update(Mod, X, FState0),
-    {noreply, {Mod, Name, FState}}.
+    {noreply, {Mod, FState}}.
 
 %% @hidden
 terminate(_Reason, _State) ->
