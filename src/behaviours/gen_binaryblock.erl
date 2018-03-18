@@ -6,7 +6,7 @@
 
 -export([behaviour_info/1]).
 
--export([start_link/5,
+-export([start_link/4,
 	 init/1,
 	 handle_call/3,
 	 handle_cast/2,
@@ -25,14 +25,14 @@ behaviour_info(_) ->
 %% gen_binaryblock API
 %%%
 
-start_link(Mod, Name, X, Y, Z) ->
-    gen_server:start_link(?MODULE, {Mod, Name, X, Y, Z}, []).
+start_link(Mod, X, Y, Z) ->
+    gen_server:start_link(?MODULE, {Mod, X, Y, Z}, []).
 
 %%%
 %% gen_server Behaviour
 %%%
 
-init({Mod, Name, X, Y, Z}) ->
+init({Mod, X, Y, Z}) ->
     {ok, ValX} = wire:probe(X),
     {ok, ValY} = wire:probe(Y),
 
@@ -40,7 +40,7 @@ init({Mod, Name, X, Y, Z}) ->
     wire:add_observer(X, self(), x),
     wire:add_observer(Y, self(), y),
 
-    {ok, {Mod, Name, Z, ValX, ValY}}.
+    {ok, {Mod, Z, ValX, ValY}}.
 
 handle_call(_What, _From, State) ->
     {reply, ok, State}.
@@ -48,13 +48,13 @@ handle_call(_What, _From, State) ->
 handle_cast(_What, State) ->
     {noreply, State}.
 
-handle_info({x, X}, {Mod, Name, Z, _, ValY}) ->
+handle_info({x, X}, {Mod, Z, _, ValY}) ->
     update(Mod, Z, X, ValY),
-    {noreply, {Mod, Name, Z, X, ValY}};
+    {noreply, {Mod, Z, X, ValY}};
 
-handle_info({y, Y}, {Mod, Name, Z, ValX, _}) ->
+handle_info({y, Y}, {Mod, Z, ValX, _}) ->
     update(Mod, Z, ValX, Y),
-    {noreply, {Mod, Name, Z, ValX, Y}}.
+    {noreply, {Mod, Z, ValX, Y}}.
 
 terminate(_Reason, _State) ->
     ok.
