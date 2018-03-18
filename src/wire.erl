@@ -27,10 +27,10 @@
 %% API
 %%%
 
-%% @doc Create a new named Wire.
+%% @doc Create a new un-named Wire.
 %%      A wire needs to have a supervisor.
-start(Supervisor, Name) ->
-    supervisor:start_child(Supervisor, [Name]).
+start(Supervisor, InitialValue) ->
+    supervisor:start_child(Supervisor, [[InitialValue]]).
 
 %% @doc Set the value of a Wire
 set(Wire, Value) ->
@@ -63,9 +63,8 @@ start_link(Opts) ->
 %%%
 
 %% @hidden
-init([Name, Value]) ->
-    register(Name, self()),
-    {ok, {Value, []}}.
+init([InitialValue]) ->
+    {ok, {InitialValue, []}}.
 
 %% @hidden
 handle_call(probe, _From, State = {Value, _}) ->
