@@ -10,7 +10,7 @@
 -define(SERVER, ?MODULE).
 
 -export([start_link/1,
-	 start/2,
+	 start/1,
 	 set/2,
 	 add_observer/3,
 	 probe/1,
@@ -29,8 +29,8 @@
 
 %% @doc Create a new un-named Wire.
 %%      A wire needs to have a supervisor.
-start(Supervisor, InitialValue) ->
-    supervisor:start_child(Supervisor, [[InitialValue]]).
+start(InitialValue) ->
+    supervisor:start_child(wire_sup, [[InitialValue]]).
 
 %% @doc Set the value of a Wire
 set(Wire, Value) ->

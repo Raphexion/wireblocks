@@ -3,7 +3,7 @@
 %% @end
 %%%-------------------------------------------------------------------
 
--module(wireblocks_sup).
+-module(wire_sup).
 
 -behaviour(supervisor).
 

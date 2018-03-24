@@ -30,12 +30,12 @@ start_link() ->
 init([]) ->
     SupFlags = #{strategy => one_for_all, intensity => 1, period => 5},
     ChildSpecs = [
-		  #{id => wireblocks_sup,
-                    start => {wireblocks_sup, start_link, []},
+		  #{id => wire_sup,
+                    start => {wire_sup, start_link, []},
                     restart => permanent,
                     shutdown => brutal_kill,
                     type => worker,
-                    modules => [wireblocks_sup]},
+                    modules => [wire_sup]},
 		  #{id => program0,
                     start => {program0, start_link, []},
                     restart => permanent,
