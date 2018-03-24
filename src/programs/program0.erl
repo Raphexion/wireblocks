@@ -38,16 +38,24 @@ handle_info(timeout, _State) ->
     {ok, Z1} = wire:start(0),
     {ok, _Adder1} = adder:start(X, Y, Z1),
 
-%    {ok, Z2} = wire:start(0),
-%    {ok, _Mul1} = mul:start(X, Y, Z2),
-%
-%    {ok, Z3} = wire:start(0),
-%    {ok, _Mul2} = mul:start(Z1, Z2, Z3),
-%
-%    {ok, Z4} = wire:start(0),
-%    {ok, _Inc1} = inc:start(X, Z4, no_local_fstate),
+    {ok, Z2} = wire:start(0),
+    {ok, _Mul1} = mul:start(X, Y, Z2),
 
-    {noreply, [X, Y, Z1]}.
+    {ok, Z3} = wire:start(0),
+    {ok, _Mul2} = mul:start(Z1, Z2, Z3),
+
+    {ok, Z4} = wire:start(0),
+    {ok, _Inc1} = inc:start(X, Z4, no_local_fstate),
+
+    State = #{
+      x => X,
+      y => Y,
+      z1 => Z1,
+      z2 => Z2,
+      z3 => Z3,
+      z4 => Z4},
+
+    {noreply, State}.
 
 terminate(_Reason, _State) ->
     ok.
