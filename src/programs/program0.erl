@@ -1,37 +1,14 @@
 -module(program0).
 
--behaviour(gen_server).
-
--define(SERVER, ?MODULE).
-
--export([init/1,
-	 handle_call/3,
-	 handle_cast/2,
-	 handle_info/2,
-	 terminate/2,
-	 code_change/3]).
+-behaviour(gen_subprogram).
 
 -export([start_link/0,
-	 wires/0]).
+	 subprogram_info/0]).
 
 start_link() ->
-    gen_server:start_link({local, ?SERVER}, ?MODULE, [], []).
+    gen_subprogram:start_link(?MODULE).
 
-wires() ->
-    gen_server:call(?MODULE, wires).
-
-init([]) ->
-    {ok, [], 0}.
-
-handle_call(_What, _From, State) ->
-    {reply, {ok, State}, State}.
-
-handle_cast(_What, State) ->
-    {noreply, State}.
-
-handle_info(timeout, _State) ->
-    io:fwrite("timeout~n", []),
-
+subprogram_info() ->
     {ok, X} = wire:start(2),
     {ok, Y} = wire:start(3),
 
@@ -47,18 +24,9 @@ handle_info(timeout, _State) ->
     {ok, Z4} = wire:start(0),
     {ok, _Inc1} = inc:start(X, Z4, no_local_fstate),
 
-    State = #{
-      x => X,
+    #{x => X,
       y => Y,
       z1 => Z1,
       z2 => Z2,
       z3 => Z3,
-      z4 => Z4},
-
-    {noreply, State}.
-
-terminate(_Reason, _State) ->
-    ok.
-
-code_change(_OldVsn, State, _Extra) ->
-    {ok, State}.
+      z4 => Z4}.
