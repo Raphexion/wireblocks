@@ -4,8 +4,6 @@
 
 -define(SERVER, ?MODULE).
 
--export([behaviour_info/1]).
-
 -export([start_link/4,
 	 init/1,
 	 handle_call/3,
@@ -16,10 +14,8 @@
 
 %%
 
-behaviour_info(callbacks) ->
-    [{start, 4}, {f, 2}];
-behaviour_info(_) ->
-    undefined.
+-callback start(any(), any(), any()) -> any().
+-callback f(any(), any()) -> any().
 
 %%%
 %% gen_binaryblock API
