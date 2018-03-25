@@ -41,8 +41,14 @@ init([]) ->
                     restart => permanent,
                     shutdown => brutal_kill,
                     type => worker,
-                    modules => [program0]}
-		 ],
+                    modules => [program0]},
+		  #{id => program1,
+                    start => {program1, start_link, []},
+                    restart => permanent,
+                    shutdown => brutal_kill,
+                    type => worker,
+                    modules => [program1]}
+	 ],
     {ok, {SupFlags, ChildSpecs}}.
 
 %%====================================================================
