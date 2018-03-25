@@ -3,8 +3,8 @@
 -export([start/0]).
 
 start() ->
-    {ok, Supervisor} = wireblocks_sup:start_link(),
-    {ok, X} = wire:start(Supervisor, 0),
+    {ok, Supervisor} = wire_sup:start_link(),
+    {ok, X} = wire:start(0),
 
     {ok, _Debug} = debug:start(X, "X: "),
 
