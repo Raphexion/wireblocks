@@ -2,13 +2,17 @@
 
 -behaviour(gen_subprogram).
 
--export([start_link/0,
-	 subprogram_info/0]).
+-export([start_link/1,
+	 subprogram_info/1,
+	 subprogram_config/1]).
 
-start_link() ->
-    gen_subprogram:start_link(?MODULE).
+start_link(_DependencyMap) ->
+    gen_subprogram:start_link(?MODULE, #{}).
 
-subprogram_info() ->
+subprogram_info(Program) ->
+    gen_subprogram:subprogram_info(Program).
+
+subprogram_config(_DependencyMap) ->
     {ok, X} = wire:start(2),
     {ok, Y} = wire:start(3),
 

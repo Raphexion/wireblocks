@@ -12,30 +12,35 @@
 	 code_change/3]).
 
 -export([start_link/1,
-	 subprogram_info/0]).
+	 start_link/2,
+	 subprogram_info/1]).
 
--callback start_link() -> {ok, any()}.
--callback subprogram_info() -> any().
+-callback start_link(map()) -> {ok, pid()}.
+-callback subprogram_info(pid()) -> map().
+-callback subprogram_config(map()) -> map().
 
 %%%
 %% API
 %%%
 
 start_link(Mod) ->
-    gen_server:start_link(?MODULE, Mod, []).
+    start_link(Mod, #{}).
 
-subprogram_info() ->
-    gen_server:call(?MODULE, subprogram_info).
+start_link(Mod, DependencyMap) ->
+    gen_server:start_link(?MODULE, {Mod, DependencyMap}, []).
+
+subprogram_info(SubProgram) ->
+    gen_server:call(SubProgram, subprogram_info).
 
 %%%
 %% Behaviour
 %%%
 
-init(Mod) ->
-    {ok, #{mod => Mod}, 0}.
+init({Mod, DependencyMap}) ->
+    {ok, #{mod => Mod, dep => DependencyMap}, 0}.
 
 handle_call(subprogram_info, _From, State) ->
-    {ok, State, State};
+    {reply, State, State};
 
 handle_call(_What, _From, State) ->
     {reply, {ok, State}, State}.
@@ -45,9 +50,14 @@ handle_cast(_What, State) ->
 
 handle_info(timeout, State) ->
     Mod = maps:get(mod, State),
-    Info = Mod:subprogram_info(),
-    maps:put(mod, Mod, Info),
-    {noreply, Info}.
+    Dep = maps:get(dep, State),
+
+    Info0 = Mod:subprogram_config(Dep),
+
+    Info1 = maps:put(mod, Mod, Info0),
+    Info2 = maps:put(dep, Dep, Info1),
+
+    {noreply, Info2}.
 
 terminate(_Reason, _State) ->
     ok.

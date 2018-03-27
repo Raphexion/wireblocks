@@ -10,5 +10,5 @@ start(Wire, Local) ->
     gen_sinkblock:start_link(?MODULE, Wire, Local).
 
 f(X, Local) ->
-    io:fwrite("~p~p~n", [Local, X]),
+    io:fwrite("~s ~p~n", [Local, X]),
     {ok, Local}.

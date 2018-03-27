@@ -28,7 +28,9 @@ start_link() ->
 
 %% Child :: {Id,StartFunc,Restart,Shutdown,Type,Modules}
 init([]) ->
-    SupFlags = #{strategy => one_for_all, intensity => 1, period => 5},
+    SupFlags = #{strategy => one_for_all,
+		 intensity => 1,
+		 period => 5},
     ChildSpecs = [
 		  #{id => wire_sup,
                     start => {wire_sup, start_link, []},
@@ -37,17 +39,23 @@ init([]) ->
                     type => worker,
                     modules => [wire_sup]},
 		  #{id => program0,
-                    start => {program0, start_link, []},
+                    start => {program0, start_link, [#{}]},
                     restart => permanent,
                     shutdown => brutal_kill,
                     type => worker,
                     modules => [program0]},
 		  #{id => program1,
-                    start => {program1, start_link, []},
+                    start => {program1, start_link, [#{}]},
                     restart => permanent,
                     shutdown => brutal_kill,
                     type => worker,
-                    modules => [program1]}
+                    modules => [program1]},
+		  #{id => program2,
+                    start => {program2, start_link, [#{}]},
+                    restart => permanent,
+                    shutdown => brutal_kill,
+                    type => worker,
+                    modules => [program2]}
 	 ],
     {ok, {SupFlags, ChildSpecs}}.
 
