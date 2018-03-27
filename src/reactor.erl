@@ -3,7 +3,7 @@
 -behaviour(gen_server).
 
 -define(SERVER, ?MODULE).
--define(DEFAULT_EMTPY_TICK, 100000).
+-define(DEFAULT_EMTPY_TICK, 100).
 
 %%
 
@@ -41,14 +41,10 @@ handle_call(What, _From, State) ->
 
 handle_cast({exec, Wire, Value, ExecTime}, {Tree0}) ->
     CurrentTime = erlang:monotonic_time(microsecond),
-    {Tree1, Time} = handle_exec(Wire, Value, ExecTime, CurrentTime, Tree0),
-    Timeout = round(Time / 1000),
-    {noreply, {Tree1}, Timeout}.
+    safe_noreply(handle_exec(Wire, Value, ExecTime, CurrentTime, Tree0)).
 
 handle_info(timeout, {Tree}) ->
-    {Tree1, Time} = handle_timeout(Tree),
-    Timeout = round(Time / 1000),
-    {noreply, {Tree1}, Timeout}.
+    safe_noreply(handle_timeout(Tree)).
 
 terminate(_Reason, _State) ->
     io:fwrite("Dying :(~n", []),
@@ -93,9 +89,24 @@ calc_next_timeout(Tree) ->
     calc_next_timeout(Tree, gb_trees:size(Tree)).
 
 calc_next_timeout(Tree, 0) ->
-    {Tree, ?DEFAULT_EMTPY_TICK};
+    {Tree, empty};
 
 calc_next_timeout(Tree, _N) ->
     {Time, _} =  gb_trees:smallest(Tree),
     Now = erlang:monotonic_time(microsecond),
     {Tree, Time - Now}.
+
+%%
+%%
+safe_noreply({Tree, Time}) ->
+    safe_noreply(Tree, Time).
+
+safe_noreply(Tree, empty) ->
+    {noreply, {Tree}};
+
+safe_noreply(Tree, Time) when Time < 0 ->
+    {noreply, {Tree}, 0};
+
+safe_noreply(Tree, Time) ->
+    Timeout = round(Time / 1000),
+    {noreply, {Tree}, Timeout}.
