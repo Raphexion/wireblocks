@@ -7,10 +7,7 @@ link(0, Last, Acc) ->
     {ok, Last, Acc};
 
 link(N, Parent, Acc) ->
-    WireName = list_to_atom(lists:concat(["link", N])),
-    {ok, Child} = wire:start(0),
-
-    BlockName = list_to_atom(lists:concat(["block", N])),
+    {ok, Child} = wire_sup:start_wire(0),
     {ok, _} = alias:start(Parent, Child, no_local_state),
 
     link(N-1, Child, [Child | Acc]).
@@ -34,7 +31,7 @@ test(Root, Last) ->
 
 start(N) ->
     catch  wire_sup:start_link(),
-    {ok, Root} = wire:start(0),
+    {ok, Root} = wire_sup:start_wire(0),
 
     {ok, Last, All} = link(N, Root, []),
 

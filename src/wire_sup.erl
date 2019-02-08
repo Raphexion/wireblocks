@@ -9,6 +9,7 @@
 
 %% API
 -export([start_link/0,
+	 start_wire/1,
 	 count_children/0]).
 
 %% Supervisor callbacks
@@ -23,6 +24,10 @@
 start_link() ->
     supervisor:start_link({local, ?SERVER}, ?MODULE, []).
 
+%% @doc Create a new un-named Wire.
+start_wire(InitialValue) ->
+    supervisor:start_child(?MODULE, [[InitialValue]]).
+
 count_children() ->
     supervisor:count_children(?MODULE).
 
@@ -30,7 +35,6 @@ count_children() ->
 %% Supervisor callbacks
 %%====================================================================
 
-%% Child :: {Id,StartFunc,Restart,Shutdown,Type,Modules}
 init([]) ->
     WireSpec = {wire, {wire, start_link, []},
 		temporary, 2000, worker, [wire]},

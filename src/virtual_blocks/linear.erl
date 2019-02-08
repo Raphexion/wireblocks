@@ -18,7 +18,7 @@ subprogram_config(DependencyMap) ->
     M = maps:get(m, DependencyMap),
     Y = maps:get(y, DependencyMap),
 
-    {ok, I} = wire:start(0),
+    {ok, I} = wire_sup:start_wire(0),
 
     {ok, Mul} = mul:start(X, K, I),
     {ok, Add} = adder:start(I, M, Y),
