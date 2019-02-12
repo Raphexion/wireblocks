@@ -83,8 +83,8 @@ handle_info(What, State) ->
     {noreply, State}.
 
 %% @hidden
-terminate(_Reason, _State) ->
-    io:fwrite("Dying :(~n", []),
+terminate(_Reason, #wire_state{observers=Observers}) ->
+    update(terminate, Observers),
     ok.
 
 %% @hidden
