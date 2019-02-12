@@ -12,7 +12,6 @@
 -export([start_link/1,
 	 set/2,
 	 add_observer/3,
-	 probe/1,
 	 kill/1]).
 
 -export([init/1,
@@ -33,13 +32,7 @@ set(Wire, Value) ->
 %% @doc Register a Observer that will get
 %%      notified when a Wire changes value
 add_observer(Wire, Observer, Tag) ->
-    gen_server:cast(Wire, {add_observer, Observer, Tag}).
-
-%% @doc Debug-purposes only.
-%%      Read the current value of a Wire
-%% @hidden
-probe(Wire) ->
-    gen_server:call(Wire, probe).
+    gen_server:call(Wire, {add_observer, Observer, Tag}).
 
 %% @doc Kill a Wire
 %% @hidden
@@ -63,17 +56,13 @@ init(InitialValue) ->
     {ok, #wire_state{value=InitialValue}}.
 
 %% @hidden
-handle_call(probe, _From, State=#wire_state{value=Value}) ->
-    {reply, {ok, Value}, State};
+handle_call({add_observer, Observer, Tag}, _From, #wire_state{value=Value, observers=OrgObservers}) ->
+    Observers=[{Tag, Observer}|OrgObservers],
+    {reply, {ok, Value}, #wire_state{value=Value, observers=Observers}};
 
 %% @hidden
 handle_call(What, _From, State) ->
     {reply, {error, What}, State}.
-
-%% @hidden
-handle_cast({add_observer, Observer, Tag}, State=#wire_state{observers=OrgObservers}) ->
-    Observers=[{Tag, Observer}|OrgObservers],
-    {noreply, State#wire_state{observers=Observers}};
 
 %% @hidden
 handle_cast({set, Value}, State=#wire_state{observers=Observers}) ->
