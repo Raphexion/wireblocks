@@ -26,7 +26,7 @@ start_link() ->
 
 %% @doc Create a new un-named Wire.
 start_wire(InitialValue) ->
-    supervisor:start_child(?MODULE, [[InitialValue]]).
+    supervisor:start_child(?MODULE, [InitialValue]).
 
 count_children() ->
     supervisor:count_children(?MODULE).
@@ -36,8 +36,8 @@ count_children() ->
 %%====================================================================
 
 init([]) ->
-    WireSpec = {wire, {wire, start_link, []},
-		temporary, 2000, worker, [wire]},
+    WireSpec = #{id => wire,
+		 start => {wire, start_link, []}},
     {ok, {{simple_one_for_one, 1, 1}, [WireSpec]}}.
 
 %%====================================================================

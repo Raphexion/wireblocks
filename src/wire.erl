@@ -56,12 +56,14 @@ start_link(Opts) ->
 %% Behaviour implementations for GenServer
 %%%
 
-%% @hidden
-init([InitialValue]) ->
-    {ok, {InitialValue, []}}.
+-record(wire_state, {value, observers = []}).
 
 %% @hidden
-handle_call(probe, _From, State = {Value, _}) ->
+init(InitialValue) ->
+    {ok, #wire_state{value=InitialValue}}.
+
+%% @hidden
+handle_call(probe, _From, State=#wire_state{value=Value}) ->
     {reply, {ok, Value}, State};
 
 %% @hidden
@@ -69,13 +71,14 @@ handle_call(What, _From, State) ->
     {reply, {error, What}, State}.
 
 %% @hidden
-handle_cast({add_observer, Observer, Tag}, {Value, Observers}) ->
-    {noreply, {Value, [{Tag, Observer}] ++ Observers}};
+handle_cast({add_observer, Observer, Tag}, State=#wire_state{observers=OrgObservers}) ->
+    Observers=[{Tag, Observer}|OrgObservers],
+    {noreply, State#wire_state{observers=Observers}};
 
 %% @hidden
-handle_cast({set, Value}, {_, Observers}) ->
+handle_cast({set, Value}, State=#wire_state{observers=Observers}) ->
     update(Value, Observers),
-    {noreply, {Value, Observers}};
+    {noreply, State#wire_state{value=value}};
 
 %% @hidden
 handle_cast(kill, State) ->
